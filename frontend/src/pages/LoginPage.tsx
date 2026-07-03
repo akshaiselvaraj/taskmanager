@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -17,9 +18,13 @@ export default function LoginPage() {
       login(res.data.token);
       toast.success('Login successful!');
       navigate('/tasks');
-    } catch (error: any) {
-      const msg = error.response?.data?.errors?.[0]?.message || error.response?.data?.message || 'Login failed';
-      toast.error(msg);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const msg = error.response?.data?.errors?.[0]?.message || error.response?.data?.message || 'Login failed';
+        toast.error(msg);
+      } else {
+        toast.error('An unexpected error occurred');
+      }
     }
   };
 
