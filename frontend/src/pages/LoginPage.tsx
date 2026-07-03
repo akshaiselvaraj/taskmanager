@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -11,9 +12,15 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await api.post('/auth/login', { email, password });
-    login(res.data.token);
-    navigate('/tasks');
+    try {
+      const res = await api.post('/auth/login', { email, password });
+      login(res.data.token);
+      toast.success('Login successful!');
+      navigate('/tasks');
+    } catch (error: any) {
+      const msg = error.response?.data?.errors?.[0]?.message || error.response?.data?.message || 'Login failed';
+      toast.error(msg);
+    }
   };
 
   return (

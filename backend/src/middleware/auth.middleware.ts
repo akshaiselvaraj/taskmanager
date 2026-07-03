@@ -5,9 +5,12 @@ export interface AuthRequest extends Request {
   userId?: number;
 }
 
-export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'No token' });
+  if (!token) {
+    res.status(401).json({ message: 'No token' });
+    return;
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: number };

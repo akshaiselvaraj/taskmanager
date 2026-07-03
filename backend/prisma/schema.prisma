@@ -1,10 +1,10 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
 }
 
 model User {
@@ -14,11 +14,19 @@ model User {
   tasks    Task[]
 }
 
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
 model Task {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   title     String
-  completed Boolean  @default(false)
+  completed Boolean   @default(false)
+  priority  Priority  @default(MEDIUM)
+  dueDate   DateTime?
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
 }
